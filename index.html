@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>站在浪头之上 · AI时代的教育突围与选择</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1c1410;
+    --ink-light: #4a3f35;
+    --paper: #faf6ef;
+    --paper-warm: #f5ede0;
+    --rust: #b05a2a;
+    --rust-light: #d4845a;
+    --sage: #7a8c6e;
+    --sage-light: #a8b89a;
+    --gold: #c49a3c;
+    --gold-light: #e8c878;
+    --blush: #d4967a;
+    --line: rgba(28,20,16,0.12);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif SC', serif;
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* 纹理背景 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.6;
+  }
+
+  /* Cover */
+  .cover {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(176,90,42,0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 85% 10%, rgba(122,140,110,0.2) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(196,154,60,0.08) 0%, transparent 70%);
+  }
+
+  .cover-deco {
+    position: absolute;
+    top: 0; right: 0;
+    width: 45%;
+    height: 100%;
+    opacity: 0.06;
+    background: repeating-linear-gradient(
+      -45deg,
+      #fff 0px,
+      #fff 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  }
+
+  .cover-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .cover-circle:nth-child(1) { width: 500px; height: 500px; top: -150px; right: -100px; }
+  .cover-circle:nth-child(2) { width: 300px; height: 300px; bottom: 100px; right: 150px; border-color: rgba(196,154,60,0.15); }
+  .cover-circle:nth-child(3) { width: 180px; height: 180px; top: 40%; left: 5%; border-color: rgba(122,140,110,0.2); }
+
+  .cover-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 800px;
+  }
+
+  .cover-label {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .cover-title {
+    font-size: clamp(40px, 7.5vw, 76px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  .cover-title em {
+    font-style: normal;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .cover-subtitle {
+    font-size: clamp(15px, 2.5vw, 20px);
+    color: rgba(255,255,255,0.55);
+    font-weight: 300;
+    margin-top: 16px;
+    margin-bottom: 50px;
+    max-width: 580px;
+    opacity: 0;
+    animation: fadeUp 1s 0.7s forwards;
+  }
+
+  .cover-line {
+    width: 60px;
+    height: 2px;
+    background: var(--rust-light);
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+
+  .cover-quote {
+    font-size: 14px;
+    color: rgba(255,255,255,0.45);
+    font-style: italic;
+    font-family: 'Playfair Display', 'Noto Serif SC', serif;
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 1s 1.1s forwards;
+  }
+
+  .cover-footer {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+  }
+
+  .cover-nav {
+    display: flex;
+    gap: 28px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .cover-scroll {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.2em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* Main content */
+  .main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  /* Pull quote / opener */
+  .opener {
+    margin-bottom: 80px;
+    padding: 50px 0;
+    border-top: 2px solid var(--rust);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+
+  .opener::before {
+    content: 'C';
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    color: var(--rust);
+    opacity: 0.15;
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    line-height: 1;
+  }
+
+  .opener p {
+    font-size: clamp(19px, 2.8vw, 24px);
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .opener p:last-child {
+    margin-bottom: 0;
+  }
+
+  .opener em {
+    font-style: normal;
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 72px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .section-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--rust);
+    opacity: 0.22;
+    line-height: 1;
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: clamp(18px, 2.5vw, 23px);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+
+  .section-title span {
+    display: block;
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    color: var(--rust-light);
+    letter-spacing: 0.3em;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .section p {
+    font-size: 16px;
+    color: var(--ink-light);
+    margin-bottom: 20px;
+    line-height: 1.95;
+  }
+
+  .section p:last-child { margin-bottom: 0; }
+
+  /* Highlight box */
+  .highlight {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--rust);
+    padding: 24px 28px;
+    margin: 32px 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .highlight p {
+    font-size: 15.5px;
+    color: var(--ink);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  /* Compare Grid (Two Kids) */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 32px 0;
+  }
+
+  .compare-card {
+    padding: 26px 24px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  }
+
+  .compare-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(28,20,16,0.08);
+    border-color: var(--rust-light);
+  }
+
+  .compare-tag {
+    display: inline-block;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--rust);
+    background: var(--paper-warm);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .compare-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .compare-desc {
+    font-size: 14px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink-light);
+    line-height: 1.8;
+  }
+
+  /* Strategy Cards */
+  .qualities {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .quality-card {
+    padding: 24px 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  }
+
+  .quality-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(28,20,16,0.08);
+    border-color: var(--rust-light);
+  }
+
+  .quality-icon {
+    font-size: 26px;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .quality-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .quality-desc {
+    font-size: 13.5px;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink-light);
+    line-height: 1.75;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    margin: 48px -20px;
+    padding: 40px 40px;
+    background: var(--ink);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pull-quote::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(176,90,42,0.3), transparent 60%);
+  }
+
+  .pull-quote p {
+    font-size: clamp(17px, 2.4vw, 21px);
+    font-weight: 300;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.9);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 0;
+  }
+
+  .pull-quote em {
+    font-style: normal;
+    color: var(--gold-light);
+  }
+
+  /* Special Dark section for History & Future */
+  .dark-section {
+    background: linear-gradient(135deg, #1c1410 0%, #2d2018 100%);
+    color: #fff;
+    padding: 48px 40px;
+    margin: 48px -20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dark-section::after {
+    content: '学统';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 110px;
+    font-weight: 700;
+    font-family: 'Noto Serif SC', serif;
+    color: rgba(255,255,255,0.03);
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+
+  .dark-section .section-title {
+    color: #fff;
+  }
+
+  .dark-section .section-title span {
+    color: var(--blush);
+  }
+
+  .dark-section p {
+    color: rgba(255,255,255,0.75);
+  }
+
+  .dark-section .section-num {
+    color: var(--blush);
+    opacity: 0.4;
+  }
+
+  .dark-cards {
+    display: grid;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .dark-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .dark-card-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .dark-card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.92);
+    margin-bottom: 6px;
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  .dark-card-text {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.75;
+  }
+
+  /* Closing */
+  .closing {
+    margin-top: 80px;
+    padding-top: 60px;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .closing-ornament {
+    font-size: 32px;
+    margin-bottom: 28px;
+    display: block;
+    opacity: 0.4;
+  }
+
+  .closing-text {
+    font-size: clamp(19px, 2.8vw, 25px);
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--ink);
+    max-width: 620px;
+    margin: 0 auto 32px;
+  }
+
+  .closing-text em {
+    font-style: normal;
+    color: var(--rust);
+    font-weight: 500;
+  }
+
+  .closing-sign {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 12px;
+    color: var(--ink-light);
+    letter-spacing: 0.3em;
+    opacity: 0.6;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 48px 0;
+    opacity: 0.3;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: var(--ink); }
+  .divider-dot { width: 4px; height: 4px; background: var(--rust); border-radius: 50%; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .cover { padding: 40px 24px 36px; }
+    .main { padding: 48px 24px 80px; }
+    .pull-quote, .dark-section { margin: 32px -10px; padding: 32px 24px; }
+    .qualities, .compare-grid { grid-template-columns: 1fr; }
+    .opener::before { font-size: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-deco"></div>
+  <div class="cover-circle"></div>
+  <div class="cover-circle"></div>
+  <div class="cover-circle"></div>
+
+  <div class="cover-content">
+    <p class="cover-label">时代镜鉴 · 教育公平 · 理性突围</p>
+    <h1 class="cover-title">
+      站在浪头之上
+      <em>AI时代的教育突围与选择</em>
+    </h1>
+    <p class="cover-subtitle">从1905年废科举的历史回响，看新旧逻辑交替期普通家庭与教育者的清醒应对</p>
+    <div class="cover-line"></div>
+    <p class="cover-quote">“站在浪头之上，要比被浪卷走，永远更值得争取。”</p>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-nav">
+      <span>回响与错位</span>
+      <span>分化的门槛</span>
+      <span>家庭弹性策略</span>
+      <span>废墟建新学</span>
+    </div>
+    <div class="cover-scroll">
+      <div class="scroll-line"></div>
+      <span>向下阅读</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Opener -->
+  <div class="opener">
+    <p>“我最近总是忍不住想，我们现在，会不会跟晚清废除科举时差不多？”这是BBC中文今年4月一篇报道中，一位校外教育机构经营者发出的感慨。她的小女儿刚刚上一年级，距离高考还有11年。一个每天教别人家孩子如何取得好成绩的人，却开始怀疑：自己正在帮助孩子们努力争取的那套教育回报体系还能撑多久？</p>
+    <p>真正令人害怕的，或许不是高考取消，而是另一种更深层的不确定性：<em>自己今天倾尽时间、精力和家庭资源，帮助孩子积累的那些优势，未来还能不能兑换成相应的竞争力？</em></p>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <span class="section-num">一</span>
+      <h2 class="section-title">
+        <span>The Misalignment of Eras</span>
+        1905年的回响：旧路径松动与新错位
+      </h2>
+    </div>
+    <p>过去，我们对教育有一套相对明确的理解：努力学习，取得好成绩，进入好学校，获得更好的学历，最终争取更好的职业和人生机会。这条路径并不保证每个人都能成功，却至少为普通家庭提供了一种相对清晰、可以规划的未来。但AI的快速发展，正在让这条熟悉的路径出现新的变数。</p>
+    <p>当越来越多过去需要多年学习才能掌握的知识和技能，可以通过AI快速调用；当写作、翻译、编程、数据分析乃至部分专业工作都在发生变化，我们不得不重新思考：过去被教育体系高度重视的能力，未来还会有多大的价值？一个孩子今天努力争取的优势，十年后还能够在社会中获得怎样的回报？</p>
+    
+    <div class="highlight">
+      <p>真正值得警惕的是社会已经开始改变，我们却仍然只能用旧的规则安排孩子的未来。</p>
+    </div>
+
+    <p>1905年，清政府废除科举制度，对于当时许多读书人而言，意味着自己几十年来赖以规划人生的成功路径突然发生了改变。但旧的道路关闭了，新的道路却需要时间建设。新式学堂、现代大学和新的职业体系逐渐形成，但教育资源的分配、社会对学历的认可、人才选拔方式以及普通人的上升通道，都经历了漫长而复杂的调整。</p>
+    <p>今天的中国教育，与晚清教育当然不能同日而语——学历依然具有现实价值，标准化考试在大规模人才选拔中仍然承担着重要功能，AI也不是一纸诏书就能终结某种制度的外部力量。但两者之间确实存在一个值得深思的相似之处：当社会需要的人才正在发生变化，而教育体系仍然主要按照过去的标准培养和评价学生时，教育与社会之间就可能出现新的错位。</p>
+  </div>
+
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- Section 2 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <span class="section-num">二</span>
+      <h2 class="section-title">
+        <span>The New Divide</span>
+        工具平权下的隐形分化：两种孩子的未来
+      </h2>
+    </div>
+    <p>如果高考所筛选的能力与社会真正需要的能力之间出现越来越大的错位，而多元上升通道又没有同步建立，普通家庭将承受最大冲击。晚清废科举后寒门子弟反而更难的历史，值得今天警惕。</p>
+    <p>过去，高考虽然不能解决所有教育公平问题，但它至少提供了一套相对统一、公开和可比较的选拔规则。对于缺乏家庭背景和社会资源的普通家庭而言，通过努力学习争取更好的升学机会，仍然是改变命运的重要路径。现在，如果未来的人才选拔越来越重视项目经历、跨学科能力、实践经验、创新成果和综合素养，那么新的机会究竟会向谁开放？我们不妨想象两种孩子：</p>
+
+    <div class="compare-grid">
+      <div class="compare-card">
+        <span class="compare-tag">资源充裕家庭</span>
+        <div class="compare-title">把AI变成整合资源的“放大器”</div>
+        <div class="compare-desc">从小拥有丰富的教育资源，父母能够提供充分的交流和指导，有条件参加各种项目、参观展览、接触真实世界，还能够得到专业人士的帮助。他很容易把AI变成自己的学习助手，将技术、知识和资源整合起来，形成更丰富的学习成果。</div>
+      </div>
+      <div class="compare-card">
+        <span class="compare-tag">普通家庭</span>
+        <div class="compare-title">面对同一工具却缺少“转化支架”</div>
+        <div class="compare-desc">父母忙于工作，能够提供的教育资源有限。他可能同样拥有一台电脑，也能够使用AI，但缺少足够的知识积累、实践机会和成人指导，不知道如何辨别信息，更不知道怎样把工具转化为真正的能力。</div>
+      </div>
+    </div>
+
+    <p>两个人使用的可能是同样的AI工具，但最终获得的成长收益却可能截然不同。AI降低了知识获取的部分门槛，却不一定降低了创造价值的门槛。</p>
+  </div>
+
+  <!-- Pull Quote -->
+  <div class="pull-quote section" id="pq">
+    <p>教育改革如果只关注培养标准，而不关注资源分配和机会保障，那么所谓的<em>多元化发展</em>，可能最终成为<em>少数家庭才能享有的优势</em>。</p>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <span class="section-num">三</span>
+      <h2 class="section-title">
+        <span>Pragmatic Resilience</span>
+        过渡期应对：在现实与未来之间建立弹性
+      </h2>
+    </div>
+    <p>制度变革需要时间，普通家庭可等不起。在选拔逻辑和培养目标尚未完全调整之前，必须先做出自己的应对。高考短期内仍然是非常重要的升学渠道，学校、学历和专业依然会影响孩子未来能够获得的机会。但另一方面，如果家庭把全部时间和资源都投入到应试教育，把分数当作衡量孩子成长的唯一尺度，也同样存在风险。真正理性的选择是在现实与未来之间建立一种更有弹性的安排：</p>
+    
+    <div class="qualities">
+      <div class="quality-card">
+        <span class="quality-icon">⚖️</span>
+        <div class="quality-name">分阶段错峰布局</div>
+        <div class="quality-desc">高中阶段还需全力以赴对待高考科目；小学和初中阶段，则可以适当降低纯应试训练的时间，把省下来的精力用于培养AI难以替代的核心素养——批判性思维、叙事能力、共情力、审美力、判断力、协作力……帮助他们建立起应对变化的底层能力。</div>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon">🧭</span>
+        <div class="quality-name">警惕焦虑型培训消费</div>
+        <div class="quality-desc">当大家开始强调AI素养、创造力和跨学科能力时，市场上很可能迅速出现各种培训课程。普通家庭资源有限，切忌盲目跟风昂贵的课程，而应把钱和时间花在高杠杆的地方——深度阅读、稳定的亲子交流、让孩子多与真实世界接触，留出自主发展的空间。</div>
+      </div>
+      <div class="quality-card">
+        <span class="quality-icon">🤝</span>
+        <div class="quality-name">重建机构与家庭的信任</div>
+        <div class="quality-desc">教育市场如果只把目光放在孩子身上，很容易陷入“家长越焦虑，越愿意买单”的短期逻辑。更可持续的做法，是帮助家长建立清醒判断、降低不必要焦虑、看清真实优先级。家庭需要机构的专业支持，机构需要家庭的长期信任。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Dark section for History & Future -->
+  <div class="section dark-section" id="s4">
+    <div class="section-header">
+      <span class="section-num">四</span>
+      <h2 class="section-title">
+        <span>Rebuilding the Academic Tradition</span>
+        历史启示：旧结构松动后的“为己之学”
+      </h2>
+    </div>
+    <p>1905年废除科举，切断了旧有的单一通道，也制造了真空与震荡。三十多年后，在抗战的极端困境中，却诞生了很多人心目中的教育圣地——西南联大。它没有解决民国教育整体的不平衡，却证明了一件事：旧结构松动之后，如果有高质量的师资、清晰的使命感、以及一定的自主空间，是有可能长出真正出色的教育形态的。</p>
+
+    <div class="dark-cards">
+      <div class="dark-card">
+        <span class="dark-card-icon">🏛️</span>
+        <div>
+          <div class="dark-card-title">三重核心追问：AI松动旧逻辑后的风险与机会</div>
+          <div class="dark-card-text">如何在现有大规模教育体系中，为真正的学术探索、通识训练、人格养成留出更大空间？如何让普通学校和普通家庭，也能在某种程度上拥有一些“为己之学”的精神？如何避免在新旧交替的真空期，再次让寒门子弟成为最大的受害者？</div>
+        </div>
+      </div>
+      <div class="dark-card">
+        <span class="dark-card-icon">🔗</span>
+        <div>
+          <div class="dark-card-title">联动改革与微观行动</div>
+          <div class="dark-card-text">中国教育何去何从，最终取决于我们是否敢于正视选拔逻辑、培养目标与社会兜底三者的联动改革。而在宏观变革尚未完成之前，普通家庭和校外机构的日常选择，同样在塑造未来。家长的那句追问，不应只是焦虑的宣泄，而应成为推动变革的起点——从家庭的书桌，到机构的教室，再到整个教育体系的调整。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing section" id="closing">
+    <span class="closing-ornament">✦</span>
+    <p class="closing-text">
+      废科举之后，有人只看到秀才的失落；也有人在废墟上重建了新的学统。今天AI浪潮已经拍岸，我们同样可以选择：是被动等待体系的倾斜，还是<em>主动站在浪头，去塑造属于这个时代的教育可能</em>——<em>站在浪头之上，要比被浪卷走，永远更值得争取</em>。
+    </p>
+    <p class="closing-sign">· 站在浪头之上 · AI时代的教育突围与选择 ·</p>
+  </div>
+
+</main>
+
+<script>
+  // Intersection Observer 滚动渐入效果
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
